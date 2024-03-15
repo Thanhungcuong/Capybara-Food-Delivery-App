@@ -32,7 +32,7 @@ const HomeContainer = () => {
 
         <p className="text-base text-textColor text-center md:text-left md:w-[80%]">
           Nắng gắt, mưa rào, khói bụi, khoảng cách... ngăn cản bạn tới với những "cao lương mỹ vị"? Đừng lo, đã có 
-          <span className="text-orange-800 text-[3rem] lg:text-[1.5rem] md:w-auto px-2 py-2 rounded-lg hover:shadow-lg">
+          <span className="text-orange-800 text-[3rem] lg:text-[1.5rem] max-lg:text-[1.4rem] md:w-auto px-2 py-2 rounded-lg hover:shadow-lg my-2">
           CAPYBARA!
           </span>
         </p>
@@ -52,7 +52,7 @@ const HomeContainer = () => {
           alt="hero-bg"
         />
 
-        <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center lg:px-32  py-4 gap-4 flex-wrap">
+        <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center 2xl:px-32  py-4 gap-4 flex-wrap">
           {heroData &&
             heroData.map((n) => (
               <div

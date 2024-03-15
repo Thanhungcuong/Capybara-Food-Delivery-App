@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "browserify-zlib": "^0.2.0",
+    "stripe": "^14.20.0"
+  }
+}

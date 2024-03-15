@@ -37,7 +37,7 @@ const MainContainer = () => {
               onClick={() => setScrollValue(200)}
             >
               <MdChevronRight className="text-lg text-white" />
-            </motion.div>
+            </motion.div> 
           </div>
         </div>
         <RowContainer
