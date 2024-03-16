@@ -143,7 +143,7 @@ const CheckoutSuccess = () => {
 
               <div className="h-[5rem]">
                 <div className="flex justify-center items-center">
-                  <Link to={"/ThankYou"} onClick={() => console.log(222)}>
+                  <Link to={"/ThankYou"}>
                   <div
                     className="group bg-gradient-to-br from-orange-400 to-orange-600 hover:bg-gradient-to-br hover:from-orange-600 hover:to-orange-400 rounded-full overflow-hidden max-xl:w-[13rem]"
                   >
