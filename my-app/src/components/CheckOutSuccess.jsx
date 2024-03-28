@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useStateValue } from '../context/StateProvider';
 import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
+import Order from "./Order";
 
 const CheckoutSuccess = () => {
   const [{ cartItems }] = useStateValue();
@@ -31,6 +32,7 @@ const CheckoutSuccess = () => {
     name: '',
     phone: '',
     email: '',
+    address: '',
     message: ''
   });
 
@@ -46,7 +48,7 @@ const CheckoutSuccess = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(formData)
-    if (formData.name && formData.phone && formData.email && formData.message) {
+    if (formData.name && formData.phone && formData.email && formData.address && formData.message) {
       navigate('/ThankYou')
     }
   }
@@ -132,13 +134,24 @@ const CheckoutSuccess = () => {
                 title="Vui lòng nhập một địa chỉ email hợp lệ dạng : user@example.com"
               />
 
+<input
+                type="text"
+                required
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                className="placeholder-black bg-orange-300 rounded-lg focus:shadow-none border-none mx-auto w-10/12 p-4"
+                placeholder="   Địa chỉ (*)"
+                title="Vui lòng nhập địa chỉ của bạn"
+              />
+
               <textarea
               name="message"
               value={formData.message}
               onChange={handleInputChange}
                 rows="3"
                 className="noidung placeholder-black bg-orange-300 rounded-lg focus:shadow-none border-none mx-auto w-10/12 p-4"
-                placeholder="   Địa chỉ..."
+                placeholder="   Ghi chú..."
               ></textarea>
 
               <div className="h-[5rem]">

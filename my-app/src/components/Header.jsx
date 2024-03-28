@@ -10,29 +10,52 @@ import Avatar from "../img/avatar.png";
 import { Link } from "react-router-dom";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
-
+import { getFirestore, collection, addDoc, getDocs, query, where } from "firebase/firestore";
 const Header = () => {
-  const firebaseAuth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  const [{ user, cartShow, cartItems }, dispatch] = useStateValue();
-
-  const [isMenu, setIsMenu] = useState(false);
-
-  const login = async () => {
-    if (!user) {
-      const {
-        user: { refreshToken, providerData },
-      } = await signInWithPopup(firebaseAuth, provider);
-      dispatch({
-        type: actionType.SET_USER,
-        user: providerData[0],
-      });
-      localStorage.setItem("user", JSON.stringify(providerData[0]));
-    } else {
-      setIsMenu(!isMenu);
-    }
-  };
+    const firebaseAuth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const [{ user, cartShow, cartItems }, dispatch] = useStateValue();
+    const [isMenu, setIsMenu] = useState(false);
+    const db = getFirestore();
+    const login = async () => {
+      if (!user) {
+        const {
+          user: { refreshToken, providerData },
+        } = await signInWithPopup(firebaseAuth, provider);
+        dispatch({
+          type: actionType.SET_USER,
+          user: providerData[0],
+        });
+        localStorage.setItem("user", JSON.stringify(providerData[0]));
+    
+        const userUid = providerData[0].uid;
+    
+        // Kiểm tra xem bản ghi của người dùng đã tồn tại trong Firestore hay chưa
+        const userRolesRef = collection(db, "userRoles");
+        const querySnapshot = await getDocs(
+          query(userRolesRef, where("uid", "==", userUid))
+        );
+    
+        if (querySnapshot.empty) {
+          // Nếu không có bản ghi nào tồn tại, tạo mới bản ghi userRole
+          const userRole = {
+            uid: userUid,
+            role: 'customer' // Đặt giá trị vai trò bạn muốn cho người dùng
+          };
+    
+          try {
+            const docRef = await addDoc(userRolesRef, userRole);
+            console.log("New document written with ID: ", docRef.id);
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+        } else {
+          console.log("User role already exists in Firestore.");
+        }
+      } else {
+        setIsMenu(!isMenu);
+      }
+    };
 
   const logout = () => {
     setIsMenu(false);
