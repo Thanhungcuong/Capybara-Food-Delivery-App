@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { MdShoppingBasket, MdAdd, MdLogout } from "react-icons/md";
 import { motion } from "framer-motion";
 
@@ -16,7 +16,25 @@ const Header = () => {
     const provider = new GoogleAuthProvider();
     const [{ user, cartShow, cartItems }, dispatch] = useStateValue();
     const [isMenu, setIsMenu] = useState(false);
+    const [userRole, setUserRole] = useState(null);
     const db = getFirestore();
+    useEffect(() => {
+      const fetchUserRole = async () => {
+          if (user) {
+              const userUid = user.uid;
+              const userRolesRef = collection(db, "userRoles");
+              const querySnapshot = await getDocs(query(userRolesRef, where("uid", "==", userUid)));
+              if (!querySnapshot.empty) {
+                  querySnapshot.forEach((doc) => {
+                      setUserRole(doc.data().role); // Lưu vai trò của người dùng từ Firestore vào state
+                      console.log("User role:", doc.data().role); // In ra vai trò của người dùng
+                  });
+              }
+          }
+      };
+
+      fetchUserRole();
+  }, [user, db]);
     const login = async () => {
       if (!user) {
         const {
@@ -29,6 +47,7 @@ const Header = () => {
         localStorage.setItem("user", JSON.stringify(providerData[0]));
     
         const userUid = providerData[0].uid;
+        const userMail = providerData[0].email;
     
         // Kiểm tra xem bản ghi của người dùng đã tồn tại trong Firestore hay chưa
         const userRolesRef = collection(db, "userRoles");
@@ -39,10 +58,11 @@ const Header = () => {
         if (querySnapshot.empty) {
           // Nếu không có bản ghi nào tồn tại, tạo mới bản ghi userRole
           const userRole = {
+            gmail: userMail,
             uid: userUid,
             role: 'customer' // Đặt giá trị vai trò bạn muốn cho người dùng
           };
-    
+        
           try {
             const docRef = await addDoc(userRolesRef, userRole);
             console.log("New document written with ID: ", docRef.id);
@@ -133,7 +153,7 @@ const Header = () => {
                 exit={{ opacity: 0, scale: 0.6 }}
                 className="w-40 bg-gray-50 shadow-xl rounded-lg flex flex-col absolute top-12 right-0"
               >
-                {user && user.email === "pykous2807@gmail.com" && (
+                { userRole === "manager" && (
                   <Link to={"/createItem"}>
                     <p
                       className="px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 transition-all duration-100 ease-in-out text-textColor text-base"
@@ -192,10 +212,10 @@ const Header = () => {
               exit={{ opacity: 0, scale: 0.6 }}
               className="w-40 bg-gray-50 shadow-xl rounded-lg flex flex-col absolute top-12 right-0"
             >
-              {user && user.email === "pykous@gmail.com" && (
+              {userRole === "manager" && (
                 <Link to={"/createItem"}>
                   <p className="px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-100 transition-all duration-100 ease-in-out text-textColor text-base">
-                     Thêm đồ ăn mới <MdAdd />
+                     Thêm món <MdAdd />
                   </p>
                 </Link>
               )}

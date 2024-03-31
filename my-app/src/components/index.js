@@ -10,3 +10,5 @@ export { default as CartItem } from "./CartItem";
 export { default as CheckOutSuccess } from "./CheckOutSuccess";
 export { default as Thankyou } from "./Thankyou";
 export { default as Order } from "./Order";
+export { default as AdminRole } from "./AdminRole";
+export { default as Admin } from "./Admin";
