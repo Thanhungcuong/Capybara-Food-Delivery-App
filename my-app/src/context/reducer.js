@@ -3,10 +3,11 @@ export const actionType = {
   SET_FOOD_ITEMS: "SET_FOOD_ITEMS",
   SET_CART_SHOW: "SET_CART_SHOW",
   SET_CARTITEMS: "SET_CARTITEMS",
+  SET_ROLE: "SET_ROLE",
 };
 
 const reducer = (state, action) => {
-  // console.log(action);
+  
 
   switch (action.type) {
     case actionType.SET_USER:
@@ -14,7 +15,11 @@ const reducer = (state, action) => {
         ...state,
         user: action.user,
       };
-
+      case actionType.SET_ROLE:
+      return {
+        ...state,
+        role: action.role,
+      };
     case actionType.SET_FOOD_ITEMS:
       return {
         ...state,

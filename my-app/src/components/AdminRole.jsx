@@ -6,8 +6,6 @@ const AdminRole = () => {
     const db = getFirestore();
     const [{ user }] = useStateValue();
     const [userList, setUserList] = useState([]);
-
-    // Định nghĩa hàm fetchUserList ở ngoài useEffect
     const fetchUserList = async () => {
         const usersRef = collection(db, 'userRoles');
         const querySnapshot = await getDocs(usersRef);
@@ -19,14 +17,13 @@ const AdminRole = () => {
     };
 
     useEffect(() => {
-        fetchUserList(); // Gọi hàm fetchUserList ở đây
+        fetchUserList(); 
     }, [db]);
 
     const handleRoleChange = async (userId, newRole) => {
         const userRef = doc(db, 'userRoles', userId);
         await setDoc(userRef, { role: newRole }, { merge: true });
-        // Sau khi thay đổi vai trò, cập nhật lại danh sách tài khoản
-        fetchUserList(); // Gọi hàm fetchUserList ở đây
+        fetchUserList(); 
     };
 
     return (

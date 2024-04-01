@@ -12,3 +12,4 @@ export { default as Thankyou } from "./Thankyou";
 export { default as Order } from "./Order";
 export { default as AdminRole } from "./AdminRole";
 export { default as Admin } from "./Admin";
+export { default as Restaurant } from "./Restaurant";
