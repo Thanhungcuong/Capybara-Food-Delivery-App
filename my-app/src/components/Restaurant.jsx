@@ -11,6 +11,12 @@ const Restaurant = () => {
                     Tạo món ăn
                 </button>
             </Link>
+            <p className='text-base font-semibold my-4'>Nhấn vào nút "Đơn hàng" để hiển thị danh sách đơn hàng</p>
+            <Link to="/Order">
+                <button className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+                    Đơn hàng
+                </button>
+            </Link>
         </div>
     );
 };

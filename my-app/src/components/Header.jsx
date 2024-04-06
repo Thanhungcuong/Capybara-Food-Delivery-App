@@ -111,16 +111,17 @@ const Header = () => {
             className="flex items-center gap-24 "
           >
             <li className="text-lg text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer">
-              Trang chủ 
+            <a href="/">
+              Trang chủ </a>
             </li>
             <li className="text-lg text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer">
-              Thực đơn
+            <a href="/TobeRestaurant">
+              Trở thành chủ nhà hàng
+              </a>
             </li>
             <li className="text-lg text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer">
-              Về chúng tôi
-            </li>
-            <li className="text-lg text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer">
-              Dịch vụ
+            <a href="/Order">
+              Đơn hàng</a>
             </li>
           </motion.ul>
 

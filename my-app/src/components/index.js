@@ -13,3 +13,5 @@ export { default as Order } from "./Order";
 export { default as AdminRole } from "./AdminRole";
 export { default as Admin } from "./Admin";
 export { default as Restaurant } from "./Restaurant";
+export { default as TobeRestaurant } from "./TobeRestaurant";
+export { default as ListTobeRestaurant } from "./ListTobeRestaurant";

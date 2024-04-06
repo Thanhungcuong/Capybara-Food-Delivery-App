@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { CheckOutSuccess, CreateContainer, Header, MainContainer, Thankyou, Order, AdminRole, Admin, Restaurant} from "./components";
+import { CheckOutSuccess, CreateContainer, Header, MainContainer, Thankyou, Order, AdminRole, Admin, Restaurant, TobeRestaurant, ListTobeRestaurant} from "./components";
 import { useStateValue } from "./context/StateProvider";
 import { getAllFoodItems } from "./utils/firebaseFunctions";
 import { actionType } from "./context/reducer";
@@ -69,10 +69,12 @@ const App = () => {
                 <Route path="/" element={<MainContainer />} />
                 <Route path="/checkout-success" element={<CheckOutSuccess />} />
                 <Route path="/ThankYou" element={<Thankyou />} />
+                <Route path="/TobeRestaurant" element={<TobeRestaurant userUid={user ? user.uid : null} />} />
               </>
             )}
             <Route path="/Order" element={<Order />} />
             {isAdmin && <Route path="/AdminRole" element={<AdminRole />} />}
+            {isAdmin && <Route path="/ListTobeRestaurant" element={<ListTobeRestaurant />} />}
             {userRole === 'manager' && <Route path="/" element={<Restaurant />} />}
           </Routes>
         </main>
