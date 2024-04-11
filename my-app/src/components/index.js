@@ -15,3 +15,4 @@ export { default as Admin } from "./Admin";
 export { default as Restaurant } from "./Restaurant";
 export { default as TobeRestaurant } from "./TobeRestaurant";
 export { default as ListTobeRestaurant } from "./ListTobeRestaurant";
+export { default as Items } from "./Items";

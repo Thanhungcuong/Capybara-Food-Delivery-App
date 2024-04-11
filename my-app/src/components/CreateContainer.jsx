@@ -21,10 +21,11 @@ import { getAllFoodItems, saveItem } from "../utils/firebaseFunctions";
 import { actionType } from "../context/reducer";
 import { useStateValue } from "../context/StateProvider";
 
-const CreateContainer = () => {
+const CreateContainer = ({ userUid }) => {
   const [title, setTitle] = useState("");
   const [calories, setCalories] = useState("");
   const [price, setPrice] = useState("");
+  const [cost, setCost] = useState("");
   const [category, setCategory] = useState(null);
   const [imageAsset, setImageAsset] = useState(null);
   const [fields, setFields] = useState(false);
@@ -88,7 +89,7 @@ const CreateContainer = () => {
   const saveDetails = () => {
     setIsLoading(true);
     try {
-      if (!title || !calories || !imageAsset || !price || !category) {
+      if (!title || !calories || !imageAsset || !price || !category || !cost) {
         setFields(true);
         setMsg("Required fields can't be empty");
         setAlertStatus("danger");
@@ -99,12 +100,14 @@ const CreateContainer = () => {
       } else {
         const data = {
           id: `${Date.now()}`,
-          title: title ,
+          title: title,
           imageURL: imageAsset,
           category: category,
           calories: calories,
           qty: 1,
           price: price,
+          cost: cost, 
+          uid: userUid,
         };
         saveItem(data);
         setIsLoading(false);
@@ -126,16 +129,16 @@ const CreateContainer = () => {
         setIsLoading(false);
       }, 4000);
     }
-
+  
     fetchData();
   };
-
   const clearData = () => {
     setTitle("");
     setImageAsset(null);
     setCalories("");
     setPrice("");
     setCategory("Select Category");
+    setCost("");
   };
 
   const fetchData = async () => {
@@ -263,10 +266,22 @@ const CreateContainer = () => {
               required
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              placeholder="Giá"
+              placeholder="Giá bán"
               className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
             />
           </div>
+
+          <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
+  <MdAttachMoney className="text-gray-700 text-2xl" />
+  <input
+    type="text"
+    required
+    value={cost}
+    onChange={(e) => setCost(e.target.value)}
+    placeholder="Giá gốc"
+    className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
+  />
+</div>
         </div>
 
         <div className="flex items-center w-full">

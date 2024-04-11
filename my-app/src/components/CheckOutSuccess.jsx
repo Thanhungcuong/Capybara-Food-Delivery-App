@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { collection, addDoc, getFirestore  } from 'firebase/firestore';
+import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
 import { useStateValue } from '../context/StateProvider';
 import { Link, useNavigate } from "react-router-dom";
 
 const CheckoutSuccess = () => {
-  const [{ cartItems }] = useStateValue();
+  const [{ cartItems, user }] = useStateValue(); // Lấy thông tin người dùng từ Context
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -25,21 +25,27 @@ const CheckoutSuccess = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+    const uniqueUid = [...new Set(cartItems.map(item => item.uid))][0];
     if (formData.name && formData.phone && formData.email && formData.address && formData.message) {
       // Lưu thông tin đơn hàng vào Firestore
       const db = getFirestore();
-      const ordersRef = collection(db, 'orders');
-      await addDoc(ordersRef, {
+      const ordersRef = doc(collection(db, 'orders'),Date.now().toString());
+      await setDoc(ordersRef, {
+        idOrder: Date.now().toString(),
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
         address: formData.address,
         message: formData.message,
         cartItems: cartItems,
-        totalPrice: getTotalPrice(cartItems)
+        totalPrice: getTotalPrice(cartItems),
+        status:'Đang đặt hàng',
+        userId: user.uid,
+        uidRes: uniqueUid,
+
       });
-      
+
+
       // Chuyển hướng đến trang cảm ơn
       navigate('/ThankYou');
     } else {
@@ -53,7 +59,7 @@ const CheckoutSuccess = () => {
     let totalPrice = 0;
     let preship = 0;
     cartItems.forEach(item => {
-      preship += item.price * item.qty ;
+      preship += item.price * item.qty;
     });
     totalPrice = preship + ship;
     return totalPrice;
@@ -61,7 +67,7 @@ const CheckoutSuccess = () => {
 
   return (
     <main className="w-screen min-h-screen items-center justify-center">
-      <h1 className="text-6xl text-orange-600 w-fit mx-auto">Thanh toán</h1>
+       <h1 className="text-6xl text-orange-600 w-fit mx-auto">Thanh toán</h1>
       <div className="flex justify-center mx-auto w-[60%] rounded-2xl overflow-hidden divide-x divide-gray-400 mt-10">
         <div className="w-1/2 bg-gradient-to-r from-orange-300 to-orange-500">
           <h2 className="text-3xl font-bold mx-auto w-fit text-white p-3 border-b-2 border-black">Đơn hàng</h2>

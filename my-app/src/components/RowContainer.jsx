@@ -4,29 +4,47 @@ import { motion } from "framer-motion";
 import NotFound from "../img/NotFound.svg";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { firestore } from "../firebase.config";
 
 const RowContainer = ({ flag, data, scrollValue }) => {
   const rowContainer = useRef();
-
-  const [items, setItems] = useState([]);
-
+  const [restaurants, setRestaurants] = useState({});
   const [{ cartItems }, dispatch] = useStateValue();
 
-  const addtocart = () => {
+  const addtocart = (item) => {
+    // Kiểm tra xem món mới có thuộc cùng một nhà hàng với các món khác trong giỏ hàng không
+    if (cartItems.some(cartItem => cartItem.uid !== item.uid)) {
+      alert("Bạn chỉ có thể đưa các món của 1 nhà hàng vào giỏ hàng");
+      return;
+    }
+
+    // Thêm món vào giỏ hàng
     dispatch({
       type: actionType.SET_CARTITEMS,
-      cartItems: items,
+      cartItems: [...cartItems, item],
     });
-    localStorage.setItem("cartItems", JSON.stringify(items));
+    localStorage.setItem("cartItems", JSON.stringify([...cartItems, item]));
   };
 
   useEffect(() => {
-    rowContainer.current.scrollLeft += scrollValue;
-  }, [scrollValue]);
+    const fetchRestaurantNames = async () => {
+      const restaurantIds = data.map((item) => item.uid);
+      const restaurantNames = {};
+      for (const id of restaurantIds) {
+        const q = query(collection(firestore, "restaurantRequests"), where("uid", "==", id));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          restaurantNames[id] = doc.data().restaurantName;
+        });
+      }
+      setRestaurants(restaurantNames);
+    };
 
-  useEffect(() => {
-    addtocart();
-  }, [items]);
+    if (data) {
+      fetchRestaurantNames();
+    }
+  }, [data]);
 
   return (
     <div
@@ -41,7 +59,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
         data.map((item) => (
           <div
             key={item?.id}
-            className="w-275 h-[175px] min-w-[275px] md:w-300 md:min-w-[300px]  bg-cardOverlay rounded-lg py-2 px-4  my-12 backdrop-blur-lg hover:drop-shadow-lg flex flex-col items-center justify-evenly relative"
+            className="w-275 h-[220px] min-w-[275px] md:w-300 md:min-w-[300px]  bg-cardOverlay rounded-lg py-2 px-4  my-12 backdrop-blur-lg hover:drop-shadow-lg flex flex-col items-center justify-evenly relative"
           >
             <div className="w-full flex items-center justify-between">
               <motion.div
@@ -57,7 +75,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
               <motion.div
                 whileTap={{ scale: 0.75 }}
                 className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center cursor-pointer hover:shadow-md -mt-8"
-                onClick={() => setItems([...cartItems, item])}
+                onClick={() => addtocart(item)}
               >
                 <MdShoppingBasket className="text-white" />
               </motion.div>
@@ -75,6 +93,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
                   <span className="text-sm text-orange-500">VND</span> {item?.price}
                 </p>
               </div>
+              <p className="mt-1 text-sm text-gray-500">Nhà hàng: {restaurants[item.uid]}</p>
             </div>
           </div>
         ))
@@ -82,7 +101,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
         <div className="w-full flex flex-col items-center justify-center">
           <img src={NotFound} className="h-340" />
           <p className="text-xl text-headingColor font-semibold my-2">
-            Items Not Available
+            Đang tải món ăn, xin chờ chút!!!
           </p>
         </div>
       )}
