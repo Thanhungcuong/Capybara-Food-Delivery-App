@@ -23,6 +23,12 @@ const Restaurant = () => {
                     Món ăn
                 </button>
             </Link>
+            <p className='text-base font-semibold my-4'>Nhấn vào nút "Thống kê" để hiển thị số liệu về tổng doanh thu, lợi nhuận và chi tiết từng đơn hàng</p>
+            <Link to="/ResReport">
+                <button className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+                    Thống kê
+                </button>
+            </Link>
         </div>
     );
 };

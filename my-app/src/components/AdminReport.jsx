@@ -1,22 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
-import { collection, query, getDocs, where, getFirestore } from 'firebase/firestore';
+import React, { useState, useEffect, useRef } from "react";
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import Chart from 'chart.js/auto';
 
-const ResReport = ({ userUid }) => {
+const AdminReport = () => {
   const db = getFirestore();
   const [orders, setOrders] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [profitPercentage, setProfitPercentage] = useState(0);
+  const [userCount, setUserCount] = useState(0);
   const revenueChartRef = useRef(null);
-  const profitChartRef = useRef(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const ordersRef = collection(db, 'orders');
-        const ordersQuery = query(ordersRef, where("uidRes", "==", userUid), where("status", "==", "Hoàn thành"));
-        const ordersSnapshot = await getDocs(ordersQuery);
+        const ordersSnapshot = await getDocs(ordersRef);
         const ordersData = ordersSnapshot.docs.map(doc => doc.data());
         setOrders(ordersData);
 
@@ -43,12 +42,23 @@ const ResReport = ({ userUid }) => {
         // Vẽ biểu đồ
         drawChart(revenue, profit);
       } catch (error) {
-        
+        console.error('Error fetching orders: ', error);
+      }
+    };
+
+    const fetchUserCount = async () => {
+      try {
+        const usersRef = collection(db, 'userRoles');
+        const querySnapshot = await getDocs(usersRef);
+        setUserCount(querySnapshot.size);
+      } catch (error) {
+        console.error('Error fetching user count: ', error);
       }
     };
 
     fetchOrders();
-  }, [db, userUid]);
+    fetchUserCount();
+  }, [db]);
 
   const drawChart = (revenue, profit) => {
     const ctx = revenueChartRef.current.getContext("2d");
@@ -75,21 +85,19 @@ const ResReport = ({ userUid }) => {
 
   return (
     <div className="h-fit rounded-2xl bg-gradient-to-r from-orange-400 to-orange-600 text-white p-8">
-      <h1 className="w-fit mx-auto text-4xl font-bold text-white mb-6">Báo cáo doanh thu và lợi nhuận</h1>
+      <h1 className="w-fit mx-auto text-4xl font-bold text-white mb-6">Báo cáo số người dùng, doanh thu và lợi nhuận của ứng dụng <span className="text-blue-300">CAPYBARA</span> </h1>
       <div className="flex justify-around">
-        <div className=" flex flex-col my-auto h-fit">
-        <p className="text-white font-bold text-xl mb-2">Tổng doanh thu: {totalRevenue} VND</p>
-        <p className="text-white font-bold text-xl mb-2">Tổng lợi nhuận: {totalProfit} VND</p>
-        <p className="text-white font-bold text-xl mb-2">Phần trăm lợi nhuận: {profitPercentage}%</p>
-            
+        <div className="flex flex-col my-auto h-fit">
+            <p className="text-white font-bold text-xl mb-2">Số người dùng: {userCount}</p>
+          <p className="text-white font-bold text-xl mb-2">Tổng doanh thu: {totalRevenue} VND</p>
+          <p className="text-white font-bold text-xl mb-2">Tổng lợi nhuận: {totalProfit} VND</p>
+          <p className="text-white font-bold text-xl mb-2">Phần trăm lợi nhuận: {profitPercentage}%</p>
+          
+        </div>
+        <div className="w-2/3 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl text-white">
+          <canvas ref={revenueChartRef}></canvas>
+        </div>
       </div>
-      <div className="w-2/3 bg-gradient-to-r from-green-400 to-green-600 rounded-2xl text-white">
-        <canvas ref={revenueChartRef} ></canvas>
-      </div>
-      
-      </div>
-      
-      
       <h2 className="text-white text-xl font-semibold mt-4 mb-2">Danh sách đơn hàng</h2>
       <table className="w-full border-spacing-2 rounded-2xl overflow-hidden border">
         <thead>
@@ -107,7 +115,6 @@ const ResReport = ({ userUid }) => {
               <td className="px-4 py-2 border">{order.idOrder}</td>
               <td className="px-4 py-2 border">{order.totalPrice} VND</td>
               <td className="px-4 py-2 border">
-                {/* Tính lợi nhuận cho đơn hàng */}
                 {order.cartItems.reduce((acc, item) => acc + ((item.price - item.cost) * item.qty), 0)} VND
               </td>
             </tr>
@@ -118,4 +125,4 @@ const ResReport = ({ userUid }) => {
   );
 };
 
-export default ResReport;
+export default AdminReport;

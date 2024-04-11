@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { CheckOutSuccess, CreateContainer, Header, MainContainer, Thankyou, Order, AdminRole, Admin, Restaurant, TobeRestaurant, ListTobeRestaurant, Items} from "./components";
+import { CheckOutSuccess, CreateContainer, Header, MainContainer, Thankyou, Order, AdminRole, Admin, Restaurant, TobeRestaurant, ListTobeRestaurant, Items, ResReport, AdminReport} from "./components";
 import { useStateValue } from "./context/StateProvider";
 import { getAllFoodItems } from "./utils/firebaseFunctions";
 import { actionType } from "./context/reducer";
@@ -65,6 +65,7 @@ const App = () => {
             )}
              {userRole === 'manager' && <Route path="/createItem" element={<CreateContainer userUid={user ? user.uid : null}/>} />}
              {userRole === 'manager' && <Route path="/Items" element={<Items userUid={user ? user.uid : null}/>} />}
+             {userRole === 'manager' && <Route path="/ResReport" element={<ResReport userUid={user ? user.uid : null}/>} />}
              {userRole === 'customer' && (
               <>
                 <Route path="/" element={<MainContainer />} />
@@ -75,6 +76,7 @@ const App = () => {
             )}
             <Route path="/Order" element={<Order userUid={user ? user.uid : null} />} />
             {isAdmin && <Route path="/AdminRole" element={<AdminRole />} />}
+            {isAdmin && <Route path="/AdminReport" element={<AdminReport />} />}
             {isAdmin && <Route path="/ListTobeRestaurant" element={<ListTobeRestaurant />} />}
             {userRole === 'manager' && <Route path="/" element={<Restaurant />} />}
           </Routes>

@@ -16,3 +16,5 @@ export { default as Restaurant } from "./Restaurant";
 export { default as TobeRestaurant } from "./TobeRestaurant";
 export { default as ListTobeRestaurant } from "./ListTobeRestaurant";
 export { default as Items } from "./Items";
+export { default as ResReport } from "./ResReport";
+export { default as AdminReport } from "./AdminReport";
