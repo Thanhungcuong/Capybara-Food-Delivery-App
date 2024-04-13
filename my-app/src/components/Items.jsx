@@ -9,7 +9,6 @@ const Items = ({ userUid }) => {
   const [foodItems, setFoodItems] = useState([]);
   const [{ foodItems: allFoodItems }, dispatch] = useStateValue();
   const [editItem, setEditItem] = useState(null);
-  const [showChooseFile, setShowChooseFile] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(""); 
 
   useEffect(() => {
@@ -75,14 +74,8 @@ const Items = ({ userUid }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveImage = async () => {
-    try {
-      const storageRef = ref(storage, editItem.imageURL);
-      await deleteObject(storageRef);
-      setEditItem({ ...editItem, imageURL: "" });
-    } catch (error) {
-      console.error("Error deleting image: ", error);
-    }
+  const handleChooseImage = () => {
+    document.getElementById("fileInput").click();
   };
 
   const getCategoryDisplayName = (category) => {
@@ -254,35 +247,19 @@ const Items = ({ userUid }) => {
               <label className="block text-white font-bold mb-1">Hình ảnh:</label>
               <div className="relative">
                 <img src={editItem.imageURL} alt={editItem.title} className="h-20 w-20 mb-2" />
-                {editItem.imageURL && (
-                  <button 
-                    className="absolute top-0 right-0 text-white text-xl hover:text-gray-300 focus:outline-none"
-                    onClick={handleRemoveImage}
-                  >
-                    Xóa ảnh
-                  </button>
-                )}
-                <div>
-                  <input
-                    type="file"
-                    id="fileInput"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                  <label
-                    htmlFor="fileInput"
-                    className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500 cursor-pointer"
-                  >
-                    {editItem.imageURL ? "Thay đổi ảnh" : "Chọn ảnh"}
-                  </label>
-                  <button
-                    onClick={() => setShowChooseFile(true)}
-                    className="bg-orange-400 text-white px-4 py-2 rounded ml-2 hover:bg-orange-500"
-                  >
-                    Tải lên
-                  </button>
-                </div>
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <label
+                  htmlFor="fileInput"
+                  className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500 cursor-pointer"
+                >
+                  Thay đổi ảnh
+                </label>
               </div>
             </div>
             <button

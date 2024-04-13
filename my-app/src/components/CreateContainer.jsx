@@ -91,7 +91,7 @@ const CreateContainer = ({ userUid }) => {
     try {
       if (!title || !calories || !imageAsset || !price || !category || !cost) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Hãy điền đầy đủ thông tin món ăn!");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
