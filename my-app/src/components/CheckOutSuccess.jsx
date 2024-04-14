@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { collection, addDoc, getFirestore, doc, setDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from "react";
+import { collection, doc, setDoc, getDocs, query, where, getFirestore } from 'firebase/firestore'; // Thêm import này
 import { useStateValue } from '../context/StateProvider';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CheckoutSuccess = () => {
-  const [{ cartItems, user }] = useStateValue(); // Lấy thông tin người dùng từ Context
+  const [{ cartItems, user }] = useStateValue();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -14,6 +14,28 @@ const CheckoutSuccess = () => {
     address: '',
     message: ''
   });
+
+  const [restaurantInfo, setRestaurantInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchRestaurantInfo = async () => {
+      const uniqueUid = cartItems.length > 0 ? cartItems[0].uid : null;
+      if (!uniqueUid) return;
+
+      const db = getFirestore();
+      const restaurantQuery = query(collection(db, 'restaurantRequests'), where('uid', '==', uniqueUid));
+      const snapshot = await getDocs(restaurantQuery);
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          setRestaurantInfo(doc.data());
+        });
+      }
+    };
+
+    if (user) {
+      fetchRestaurantInfo();
+    }
+  }, [cartItems, user]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -25,11 +47,10 @@ const CheckoutSuccess = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const uniqueUid = [...new Set(cartItems.map(item => item.uid))][0];
+    const uniqueUid = cartItems.length > 0 ? cartItems[0].uid : null;
     if (formData.name && formData.phone && formData.email && formData.address && formData.message) {
-      // Lưu thông tin đơn hàng vào Firestore
       const db = getFirestore();
-      const ordersRef = doc(collection(db, 'orders'),Date.now().toString());
+      const ordersRef = doc(collection(db, 'orders'), Date.now().toString());
       await setDoc(ordersRef, {
         idOrder: Date.now().toString(),
         name: formData.name,
@@ -39,22 +60,18 @@ const CheckoutSuccess = () => {
         message: formData.message,
         cartItems: cartItems,
         totalPrice: getTotalPrice(cartItems),
-        status:'Đang đặt hàng',
+        status: 'Đang đặt hàng',
         userId: user.uid,
         uidRes: uniqueUid,
-
       });
 
-
-      // Chuyển hướng đến trang cảm ơn
       navigate('/ThankYou');
     } else {
-      // Hiển thị thông báo yêu cầu điền đầy đủ thông tin
       alert('Vui lòng điền đầy đủ thông tin');
     }
-  }
+  };
 
-  function getTotalPrice(cartItems) {
+  const getTotalPrice = (cartItems) => {
     const ship = 25000;
     let totalPrice = 0;
     let preship = 0;
@@ -68,7 +85,10 @@ const CheckoutSuccess = () => {
   return (
     <main className="w-screen min-h-screen items-center justify-center">
        <h1 className="text-6xl text-orange-600 w-fit mx-auto">Thanh toán</h1>
-      <div className="flex justify-center mx-auto w-[60%] rounded-2xl overflow-hidden divide-x divide-gray-400 mt-10">
+       <h2 className="text-3xl text-orange-600 font-bold mb-4 ">Hướng dẫn thanh toán</h2>
+          <p className="text-orange-600 text-base font-normal">Bạn hãy liên hệ với nhà hàng theo số điện thoại hoặc zalo dưới phần thông tin nhà hàng và chuyển khoản vào số tài khoản với tổng giá tiền ở trên </p>
+          <p className="text-orange-600 text-base font-normal">Bạn có thể ấn vào "Đơn hàng" trên thanh menu để theo dõi trạng thái đơn hàng của mình</p>
+      <div className="flex justify-center mx-auto w-[80%] rounded-2xl overflow-hidden divide-x divide-gray-400 mt-10">
         <div className="w-1/2 bg-gradient-to-r from-orange-300 to-orange-500">
           <h2 className="text-3xl font-bold mx-auto w-fit text-white p-3 border-b-2 border-black">Đơn hàng</h2>
           <ul className="flex flex-col gap-5 divide-y divide-gray-400">
@@ -91,10 +111,11 @@ const CheckoutSuccess = () => {
           </div>
         </div>
         <div className="w-1/2 bg-gradient-to-l from-orange-300 to-orange-500 flex flex-col ">
-          <div className=""> 
+          
+          <div>
             <h1 className="text-3xl text-white p-3 w-fit font-bold mx-auto border-b-2 border-black">Thông tin thanh toán</h1>
           </div>
-          <div className="bg-white w-[80%] mx-auto my-auto rounded-2xl ">
+          <div className="bg-white w-[80%] mx-auto my-8 rounded-2xl ">
             <form action="" className="flex flex-col gap-5 py-10" onSubmit={handleSubmit}>
               <input
                 type="text"
@@ -147,7 +168,7 @@ const CheckoutSuccess = () => {
               ></textarea>
               <div className="h-[5rem]">
                 <div className="flex justify-center items-center">
-                  <button type="submit" className="group bg-gradient-to-br from-orange-400 to-orange-600 hover:bg-gradient-to-br hover:from-orange-600 hover:to-orange-400 rounded-full overflow-hidden max-xl:w-[13rem] flex justify-center items-center text-white xl:w-48 h-10 shadow-lg shadow-orange-500/40 hover:text-black">
+                  <button type="submit" className=" bg-gradient-to-br from-orange-400 to-orange-600 hover:bg-gradient-to-br hover:from-orange-600 hover:to-orange-400 rounded-full overflow-hidden max-xl:w-[13rem] flex justify-center items-center text-white xl:w-48 h-10 shadow-lg shadow-orange-500/40 hover:text-black">
                     <div className="pr-3 max-xl:ml-4">
                       <svg
                         width="24"
@@ -183,6 +204,18 @@ const CheckoutSuccess = () => {
           </div>
         </div>
       </div>
+      {restaurantInfo && (
+        <div className="bg-gradient-to-tl from-orange-300 to-orange-500 w-[80%] mx-auto my-auto rounded-2xl p-6 mt-6">
+          <div className="">
+          <h2 className="text-3xl font-bold mb-4 text-white">Thông tin nhà hàng</h2>
+          <p className="text-white text-xl font-bold">Tên nhà hàng: {restaurantInfo.restaurantName}</p>
+          <p className="text-white text-xl font-bold">Họ và tên: {restaurantInfo.name}</p>
+          <p className="text-white text-xl font-bold">Số điện thoại: {restaurantInfo.phone}</p>
+          <p className="text-white text-xl font-bold">Zalo: {restaurantInfo.zalo}</p>
+          <p className="text-white text-xl font-bold">STK: {restaurantInfo.paymentMethod}</p>
+        </div>
+        </div>
+      )}
     </main>
   );
 };

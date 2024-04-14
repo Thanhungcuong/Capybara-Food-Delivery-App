@@ -24,7 +24,7 @@ const ResReport = ({ userUid }) => {
         let revenue = 0;
         let profit = 0;
         ordersData.forEach(order => {
-          revenue += order.totalPrice;
+          revenue += order.totalPrice - 25000;
           order.cartItems.forEach(item => {
             profit += (item.price - item.cost) * item.qty;
           });
@@ -106,7 +106,7 @@ const ResReport = ({ userUid }) => {
             <tr key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-orange-100'} text-orange-700 border`}>
               <td className="px-4 py-2 border">{index + 1}</td>
               <td className="px-4 py-2 border">{order.idOrder}</td>
-              <td className="px-4 py-2 border">{order.totalPrice} VND</td>
+              <td className="px-4 py-2 border">{order.totalPrice - 25000} VND</td>
               <td className="px-4 py-2 border">
                 {/* Tính lợi nhuận cho đơn hàng */}
                 {order.cartItems.reduce((acc, item) => acc + ((item.price - item.cost) * item.qty), 0)} VND

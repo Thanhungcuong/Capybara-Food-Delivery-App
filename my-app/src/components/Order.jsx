@@ -51,12 +51,11 @@ const Order = ({ userUid }) => {
     fetchOrders();
   }, [db, userRoleData, userUid]);
   
-  const handleStatusChange = async (orderId) => {
-    console.log(orderId);
+  const handleStatusChange = async (orderId, newStatus) => {
     try {
       const orderRef = doc(db, "orders", orderId);
       await updateDoc(orderRef, {
-        status: "Hoàn thành"
+        status: newStatus
       });
       fetchOrders();
     } catch (error) {
@@ -111,9 +110,12 @@ const Order = ({ userUid }) => {
                 <td className="px-4 py-2 border">{order.status}</td>
                 {userRoleData[0].role === 'manager' && (
                   <td className="px-4 py-2 border">
-                    {order.status !== "Hoàn thành" && (
-                      <button onClick={() => handleStatusChange(order.idOrder)}>Hoàn thành</button>
-                    )}
+                    <select value={order.status} onChange={(e) => handleStatusChange(order.idOrder, e.target.value)}>
+                    <option value="Đang vận chuyển">Đã đặt đơn</option>
+                      <option value="Đã thanh toán, đang chuẩn bị món ăn">Đã thanh toán, đang chuẩn bị món ăn</option>
+                      <option value="Đang vận chuyển">Đang vận chuyển</option>
+                      <option value="Hoàn thành">Hoàn thành</option>
+                    </select>
                   </td>
                 )}
               </tr>

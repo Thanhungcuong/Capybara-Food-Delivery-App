@@ -9,7 +9,9 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
     email: '',
     restaurantName: '',
     address: '',
-    message: ''
+    message: '',
+    zalo: '', // Thêm trường cho Zalo
+    paymentMethod: '', // Thêm trường cho Phương thức thanh toán
   });
 
   const handleInputChange = (event) => {
@@ -38,6 +40,8 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
         restaurantName: formData.restaurantName,
         address: formData.address,
         message: formData.message,
+        zalo: formData.zalo, // Thêm trường cho Zalo
+        paymentMethod: formData.paymentMethod, // Thêm trường cho Phương thức thanh toán
         status: 'Đang chờ phê duyệt' 
       });
 
@@ -86,6 +90,21 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
         />
       </div>
       <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="zalo">
+          Zalo
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="zalo"
+          type="text"
+          placeholder="Zalo"
+          name="zalo"
+          value={formData.zalo}
+          onChange={handleInputChange}
+        />
+      </div>
+      
+      <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
           Email
         </label>
@@ -126,6 +145,22 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
           value={formData.address}
           onChange={handleInputChange}
         />
+      </div>
+      {/* Thêm input cho Phương thức thanh toán */}
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="paymentMethod">
+          Phương thức thanh toán
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="paymentMethod"
+          type="text"
+          placeholder="Phương thức thanh toán"
+          name="paymentMethod"
+          value={formData.paymentMethod}
+          onChange={handleInputChange}
+        />
+        <p className="text-gray-600 text-xs italic mt-1">Ví dụ "Nguyen Van A Techcombank 123456789xxx"</p>
       </div>
       <div className="mb-6">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
