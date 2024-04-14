@@ -59,7 +59,7 @@ const ResReport = ({ userUid }) => {
         datasets: [{
           label: 'VND',
           data: [revenue, profit],
-          backgroundColor: ['blue', 'red']
+          backgroundColor: ['blue', 'orange']
         }]
       },
       options: {
@@ -78,8 +78,9 @@ const ResReport = ({ userUid }) => {
       <h1 className="w-fit mx-auto text-4xl font-bold text-white mb-6">Báo cáo doanh thu và lợi nhuận</h1>
       <div className="flex justify-around">
         <div className=" flex flex-col my-auto h-fit">
-        <p className="text-white font-bold text-xl mb-2">Tổng doanh thu: {totalRevenue} VND</p>
-        <p className="text-white font-bold text-xl mb-2">Tổng lợi nhuận: {totalProfit} VND</p>
+        <p className="text-white font-bold text-xl mb-2">Tổng doanh thu: {totalRevenue.toLocaleString()} VND</p>
+<p className="text-white font-bold text-xl mb-2">Tổng lợi nhuận: {totalProfit.toLocaleString()} VND</p>
+
         <p className="text-white font-bold text-xl mb-2">Phần trăm lợi nhuận: {profitPercentage}%</p>
             
       </div>

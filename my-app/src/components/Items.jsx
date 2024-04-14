@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { deleteObject, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, ref, uploadBytesResumable, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firestore, storage } from "../firebase.config";
 import { useStateValue } from "../context/StateProvider";
 
@@ -9,16 +9,17 @@ const Items = ({ userUid }) => {
   const [foodItems, setFoodItems] = useState([]);
   const [{ foodItems: allFoodItems }, dispatch] = useStateValue();
   const [editItem, setEditItem] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [newImageURL, setNewImageURL] = useState("");
 
   useEffect(() => {
     setFoodItems(allFoodItems);
   }, [allFoodItems]);
 
-  const handleDelete = async (id, imageURL) => {
+  const handleDelete = async (id) => {
     try {
-      const storageRef = ref(storage, imageURL);
-      await deleteObject(storageRef);
       await deleteDoc(doc(firestore, "foodItems", id));
       const updatedFoodItems = foodItems.filter((item) => item.id !== id);
       setFoodItems(updatedFoodItems);
@@ -40,7 +41,8 @@ const Items = ({ userUid }) => {
 
   const handleEdit = (item) => {
     setEditItem(item);
-    setSelectedCategory(item.category); // Set giá trị mặc định cho thể loại
+    setSelectedCategory(item.category);
+    setShowEditDialog(true);
   };
 
   const handleSaveEdit = async () => {
@@ -64,7 +66,7 @@ const Items = ({ userUid }) => {
       console.error("Error updating document: ", error);
     }
   };
-
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -73,10 +75,7 @@ const Items = ({ userUid }) => {
     };
     reader.readAsDataURL(file);
   };
-
-  const handleChooseImage = () => {
-    document.getElementById("fileInput").click();
-  };
+  
 
   const getCategoryDisplayName = (category) => {
     switch (category) {
@@ -102,6 +101,16 @@ const Items = ({ userUid }) => {
       <h1 className="w-fit mx-auto text-4xl font-bold text-white mb-6">
         Danh sách món ăn
       </h1>
+      {uploadSuccess && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="w-full p-2 rounded-lg text-center text-lg font-semibold bg-emerald-400 text-emerald-800"
+        >
+          Hình ảnh đã được tải lên thành công 😊
+        </motion.p>
+      )}
       <table className="table-fixed w-full border-spacing-2 rounded-2xl overflow-hidden border">
         <thead>
           <tr>
@@ -181,12 +190,12 @@ const Items = ({ userUid }) => {
             })}
         </tbody>
       </table>
-      {editItem && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-50" onClick={() => setEditItem(null)}>
+      {editItem && showEditDialog && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-800 bg-opacity-50 z-50" onClick={() => setShowEditDialog(false)}>
           <div className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-8 rounded-lg relative" onClick={(e) => e.stopPropagation()}>
             <button 
               className="absolute top-2 right-2 text-white text-xl hover:text-gray-300 focus:outline-none"
-              onClick={() => setEditItem(null)}
+              onClick={() => setShowEditDialog(false)}
             >
               Đóng
             </button>

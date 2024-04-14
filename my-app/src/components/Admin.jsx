@@ -8,7 +8,7 @@ const Admin = () => {
             <p className='text-base font-semibold mb-4'>Nhấn vào nút "Phân quyền" để hiển thị danh sách tài khoản và thay đổi phân quyền</p>
             <Link to="/AdminRole">
                 <button className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
-                    Phân quyền
+                    Quản lý người dùng
                 </button>
             </Link>
             <p className='text-base font-semibold my-4'>Nhấn vào nút "Đơn hàng" để hiển thị danh sách đơn hàng</p>

@@ -69,7 +69,7 @@ const AdminReport = () => {
         datasets: [{
           label: 'VND',
           data: [revenue, profit],
-          backgroundColor: ['blue', 'red']
+          backgroundColor: ['blue', 'orange']
         }]
       },
       options: {
@@ -89,8 +89,9 @@ const AdminReport = () => {
       <div className="flex justify-around">
         <div className="flex flex-col my-auto h-fit">
             <p className="text-white font-bold text-xl mb-2">Số người dùng: {userCount}</p>
-          <p className="text-white font-bold text-xl mb-2">Tổng doanh thu: {totalRevenue} VND</p>
-          <p className="text-white font-bold text-xl mb-2">Tổng lợi nhuận: {totalProfit} VND</p>
+            <p className="text-white font-bold text-xl mb-2">Tổng doanh thu: {totalRevenue.toLocaleString()} VND</p>
+<p className="text-white font-bold text-xl mb-2">Tổng lợi nhuận: {totalProfit.toLocaleString()} VND</p>
+
           <p className="text-white font-bold text-xl mb-2">Phần trăm lợi nhuận: {profitPercentage}%</p>
           
         </div>
