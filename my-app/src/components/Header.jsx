@@ -10,7 +10,7 @@ import Avatar from "../img/avatar.png";
 import { Link } from "react-router-dom";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot  } from "firebase/firestore";
 const Header = () => {
     const firebaseAuth = getAuth(app);
     const provider = new GoogleAuthProvider();
@@ -18,6 +18,17 @@ const Header = () => {
     const [isMenu, setIsMenu] = useState(false);
     const [userRole, setUserRole] = useState(null);
     const db = getFirestore();
+    useEffect(() => {
+      const unsubscribe = onSnapshot(collection(db, "userRoles"), (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+              if (change.type === "removed" && user && change.doc.data().uid === user.uid) {
+                  logout(); // Đăng xuất người dùng nếu tài khoản của họ bị xóa
+              }
+          });
+      });
+
+      return () => unsubscribe();
+  }, [user, db]);
     useEffect(() => {
       const fetchUserRole = async () => {
           if (user) {

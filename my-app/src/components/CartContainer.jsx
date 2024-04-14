@@ -7,12 +7,13 @@ import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
 import EmptyCart from "../img/emptyCart.svg";
 import CartItem from "./CartItem";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const CartContainer = () => {
   const [{ cartShow, cartItems, user }, dispatch] = useStateValue();
   const [flag, setFlag] = useState(1);
   const [tot, setTot] = useState(0);
+  const location = useLocation();
 
   const showCart = () => {
     dispatch({
@@ -20,14 +21,6 @@ const CartContainer = () => {
       cartShow: !cartShow,
     });
   };
-
-  useEffect(() => {
-    let totalPrice = cartItems.reduce(function (accumulator, item) {
-      return accumulator + item.qty * item.price;
-    }, 0);
-    setTot(totalPrice);
-    console.log(tot);
-  }, [tot, flag]);
 
   const clearCart = () => {
     dispatch({
@@ -37,6 +30,20 @@ const CartContainer = () => {
 
     localStorage.setItem("cartItems", JSON.stringify([]));
   };
+
+  useEffect(() => {
+    let totalPrice = cartItems.reduce(function (accumulator, item) {
+      return accumulator + item.qty * item.price;
+    }, 0);
+    setTot(totalPrice);
+  }, [cartItems, flag]);
+
+  // Clear cart when moving to /checkout-success
+  useEffect(() => {
+    if (location.pathname === "/checkout-success") {
+      clearCart();
+    }
+  }, [location.pathname]);
 
   return (
     <motion.div
@@ -99,16 +106,14 @@ const CartContainer = () => {
             </div>
 
             {user ? (
-<Link className="w-full flex justify-center p-2 rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 text-gray-50 text-lg my-2 hover:shadow-lg" to={"/checkout-success"}>
-              <motion.button
-                whileTap={{ scale: 0.8 }}
-                type="button"
-                className=""
-              >
-                
-                Đặt hàng
-                
-              </motion.button>
+              <Link className="w-full flex justify-center p-2 rounded-full bg-gradient-to-tr from-orange-400 to-orange-600 text-gray-50 text-lg my-2 hover:shadow-lg" to={"/checkout-success"}>
+                <motion.button
+                  whileTap={{ scale: 0.8 }}
+                  type="button"
+                  className=""
+                >
+                  Đặt hàng
+                </motion.button>
               </Link>
             ) : (
               <motion.button
@@ -134,4 +139,3 @@ const CartContainer = () => {
 };
 
 export default CartContainer;
-
