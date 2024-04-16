@@ -260,7 +260,7 @@ const CreateContainer = ({ userUid }) => {
           </div>
 
           <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-            <p className="text-gray-700 text-lg">VND</p>
+            <p className="text-orange-700 font-bold text-lg">VND</p>
             <input
               type="text"
               required
@@ -272,7 +272,7 @@ const CreateContainer = ({ userUid }) => {
           </div>
 
           <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-          <p className="text-gray-700 text-lg">VND</p>
+          <p className="text-orange-700 font-bold text-lg">VND</p>
   <input
     type="text"
     required
