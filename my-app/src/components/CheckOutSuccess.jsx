@@ -60,7 +60,7 @@ const CheckoutSuccess = () => {
         message: formData.message,
         cartItems: cartItems,
         totalPrice: getTotalPrice(cartItems),
-        status: 'Đang đặt hàng',
+        status: 'Đã đặt hàng',
         userId: user.uid,
         uidRes: uniqueUid,
       });

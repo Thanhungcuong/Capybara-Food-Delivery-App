@@ -64,7 +64,7 @@ const Order = ({ userUid }) => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-r from-orange-400 to-orange-600 text-white p-8 rounded-2xl">
+    <div className="h-fit bg-gradient-to-r from-orange-400 to-orange-600 text-white p-8 rounded-2xl">
       <h1 className="w-fit mx-auto text-4xl font-bold mb-6">Danh sách đơn hàng</h1>
       {isLoading ? (
         <p>Loading...</p>
@@ -111,7 +111,7 @@ const Order = ({ userUid }) => {
                 {userRoleData[0].role === 'manager' && (
                   <td className="px-4 py-2 border">
                     <select value={order.status} onChange={(e) => handleStatusChange(order.idOrder, e.target.value)}>
-                    <option value="Đang vận chuyển">Đã đặt đơn</option>
+                    <option value="Đang vận chuyển">Đã vận chuyển</option>
                       <option value="Đã thanh toán, đang chuẩn bị món ăn">Đã thanh toán, đang chuẩn bị món ăn</option>
                       <option value="Đang vận chuyển">Đang vận chuyển</option>
                       <option value="Hoàn thành">Hoàn thành</option>

@@ -36,7 +36,6 @@ const App = () => {
           let role = null;
           querySnapshot.forEach((doc) => {
             role = doc.data().role;
-            console.log("User role:", role); // In ra vai trò của người dùng
           });
           setUserRole(role); // Cập nhật vai trò của người dùng
         }

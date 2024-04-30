@@ -89,11 +89,11 @@ const CartContainer = () => {
           <div className="w-full flex-1 bg-cartTotal rounded-t-[2rem] flex flex-col items-center justify-evenly px-8 py-2">
             <div className="w-full flex items-center justify-between">
               <p className="text-gray-400 text-lg">Tổng tiền món</p>
-              <p className="text-gray-400 text-lg">$ {tot}</p>
+              <p className="text-gray-400 text-lg">VND {tot}</p>
             </div>
             <div className="w-full flex items-center justify-between">
               <p className="text-gray-400 text-lg">Tiền vận chuyển</p>
-              <p className="text-gray-400 text-lg">$ 25000</p>
+              <p className="text-gray-400 text-lg">VND 25000</p>
             </div>
 
             <div className="w-full border-b border-gray-600 my-2"></div>
@@ -101,7 +101,7 @@ const CartContainer = () => {
             <div className="w-full flex items-center justify-between">
               <p className="text-gray-200 text-xl font-semibold">Tổng</p>
               <p className="text-gray-200 text-xl font-semibold">
-                ${tot + 25000}
+                VND {tot + 25000}
               </p>
             </div>
 

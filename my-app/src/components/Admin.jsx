@@ -17,10 +17,10 @@ const Admin = () => {
                     Đơn hàng
                 </button>
             </Link>
-            <p className='text-base font-semibold my-4'>Nhấn vào nút "Đăng ký chủ nhà hàng" để hiển thị danh sách người dùng điền đơn đăng ký trở thành chủ nhà hàng</p>
+            <p className='text-base font-semibold my-4'>Nhấn vào nút "Xét duyệt chủ nhà hàng" để hiển thị danh sách người dùng điền đơn đăng ký trở thành chủ nhà hàng</p>
             <Link to="/ListTobeRestaurant">
                 <button className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
-                    Đăng ký chủ nhà hàng
+                Xét duyệt chủ nhà hàng
                 </button>
             </Link>
             <p className='text-base font-semibold my-4'>Nhấn vào nút "Thống kê" để hiển thị số liệu về tổng doanh thu, lợi nhuận toàn bộ ứng dụng và chi tiết tất đơn hàng</p>

@@ -63,7 +63,7 @@ const ListTobeRestaurant = () => {
             <th className='bg-orange-700 text-white text-xl font-bold px-4 py-2 border'>Địa chỉ</th>
             <th className='bg-orange-700 text-white text-xl font-bold px-4 py-2 border'>Ghi chú</th>
             <th className='bg-orange-700 text-white text-xl font-bold px-4 py-2 border'>Trạng thái</th> {/* Thêm cột Trạng thái */}
-            <th className='bg-orange-700 text-white text-xl font-bold px-4 py-2 border'>Hành động</th> {/* Thêm cột Hành động */}
+            <th className='bg-orange-700 text-white text-xl font-bold px-4 py-2 border w-60'>Hành động</th> {/* Thêm cột Hành động */}
           </tr>
         </thead>
         <tbody>
@@ -71,13 +71,13 @@ const ListTobeRestaurant = () => {
             <tr key={request.id} className='bg-white text-orange-700 border'>
               <td className='px-4 py-2 border'>{request.name}</td>
               <td className='px-4 py-2 border'>{request.phone}</td>
-              <td className='px-4 py-2 border'>{request.email}</td>
+              <td className='px-4 py-2 border max-w-xs overflow-x-auto'>{request.email}</td>
               <td className='px-4 py-2 border'>{request.restaurantName}</td>
               <td className='px-4 py-2 border'>{request.address}</td>
               <td className='px-4 py-2 border'>{request.message}</td>
               <td className='px-4 py-2 border'>{request.status}</td> {/* Hiển thị trạng thái từ Firestore */}
               <td className='px-4 py-2 border'>
-                <button className="bg-orange-400 mr-2 hover:bg-orange-500 py-1 px-3 rounded" onClick={() => handleStatusChange(request.id, 'Chấp nhận', request.uid)}>
+                <button className="bg-orange-400 mr-4 hover:bg-orange-500 py-1 px-3 rounded " onClick={() => handleStatusChange(request.id, 'Chấp nhận', request.uid)}>
                   Chấp nhận
                 </button>
                 <button className="bg-orange-400 hover:bg-orange-500 py-1 px-3 rounded" onClick={() => handleStatusChange(request.id, 'Từ chối', request.uid)}>

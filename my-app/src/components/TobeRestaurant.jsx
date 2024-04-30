@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore } from "../firebase.config";
 
-const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `userUid`
+const TobeRestaurant = ({ userUid }) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -10,8 +10,8 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
     restaurantName: '',
     address: '',
     message: '',
-    zalo: '', // Thêm trường cho Zalo
-    paymentMethod: '', // Thêm trường cho Phương thức thanh toán
+    zalo: '',
+    paymentMethod: '',
   });
 
   const handleInputChange = (event) => {
@@ -24,6 +24,25 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Kiểm tra các trường bắt buộc
+    if (
+      !formData.name ||
+      !formData.phone ||
+      !formData.email ||
+      !formData.restaurantName ||
+      !formData.address
+    ) {
+      alert('Vui lòng điền đủ thông tin vào các trường bắt buộc.');
+      return;
+    }
+
+    // Kiểm tra tính hợp lệ của Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert('Email không hợp lệ. Vui lòng nhập một địa chỉ email đúng định dạng.');
+      return;
+    }
 
     try {
       if (!userUid) {
@@ -40,8 +59,8 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
         restaurantName: formData.restaurantName,
         address: formData.address,
         message: formData.message,
-        zalo: formData.zalo, // Thêm trường cho Zalo
-        paymentMethod: formData.paymentMethod, // Thêm trường cho Phương thức thanh toán
+        zalo: formData.zalo,
+        paymentMethod: formData.paymentMethod,
         status: 'Đang chờ phê duyệt' 
       });
 
@@ -57,134 +76,131 @@ const TobeRestaurant = ({ userUid }) => { // Thay đổi prop từ `user` sang `
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-orange-400 to-orange-600 text-white rounded-2xl p-8">
-    <h1 className="text-4xl font-bold py-8 w-fit mx-auto">Đơn đăng ký làm chủ nhà hàng </h1>
-    <p className='text-lg font-semibold mb-4 '>Trở thành chủ nhà hàng của ứng dụng giao đồ ăn Capybara, bạn sẽ có tệp khách hàng thường xuyên. Hãy điền đơn dưới đây và chờ phê duyệt, chúng tôi cần bạn!</p>
-    <form className="bg-white shadow-md rounded-2xl w-[70%] mx-auto px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
-      
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-          Họ và tên
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="name"
-          type="text"
-          placeholder="Họ và tên"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-          Số điện thoại
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="phone"
-          type="tel"
-          placeholder="Số điện thoại"
-          name="phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="zalo">
-          Zalo
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="zalo"
-          type="text"
-          placeholder="Zalo"
-          name="zalo"
-          value={formData.zalo}
-          onChange={handleInputChange}
-        />
-      </div>
-      
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="email"
-          type="email"
-          placeholder="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="restaurantName">
-          Tên nhà hàng
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="restaurantName"
-          type="text"
-          placeholder="Tên nhà hàng"
-          name="restaurantName"
-          value={formData.restaurantName}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">
-          Địa chỉ nhà hàng
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="address"
-          type="text"
-          placeholder="Địa chỉ nhà hàng"
-          name="address"
-          value={formData.address}
-          onChange={handleInputChange}
-        />
-      </div>
-      {/* Thêm input cho Phương thức thanh toán */}
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="paymentMethod">
-          Phương thức thanh toán
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="paymentMethod"
-          type="text"
-          placeholder="Phương thức thanh toán"
-          name="paymentMethod"
-          value={formData.paymentMethod}
-          onChange={handleInputChange}
-        />
-        <p className="text-gray-600 text-xs italic mt-1">Ví dụ "Nguyen Van A Techcombank 123456789xxx"</p>
-      </div>
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
-          Ghi chú
-        </label>
-        <textarea
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="message"
-          placeholder="Thông điệp"
-          name="message"
-          value={formData.message}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="flex items-center justify-between">
-        <button
-          className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
-        >
-          Gửi đăng ký
-        </button>
-      </div>
-    </form>
-  </div>
+      <h1 className="text-4xl font-bold py-8 w-fit mx-auto">Đơn đăng ký làm chủ nhà hàng </h1>
+      <p className='text-lg font-semibold mb-4 '>Trở thành chủ nhà hàng của ứng dụng giao đồ ăn Capybara, bạn sẽ có tệp khách hàng thường xuyên. Hãy điền đơn dưới đây và chờ phê duyệt, chúng tôi cần bạn!</p>
+      <form className="bg-white shadow-md rounded-2xl w-[70%] mx-auto px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            Họ và tên
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="name"
+            type="text"
+            placeholder="Họ và tên"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
+            Số điện thoại
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="phone"
+            type="tel"
+            placeholder="Số điện thoại"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="zalo">
+            Zalo
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="zalo"
+            type="text"
+            placeholder="Zalo"
+            name="zalo"
+            value={formData.zalo}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="email"
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="restaurantName">
+            Tên nhà hàng
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="restaurantName"
+            type="text"
+            placeholder="Tên nhà hàng"
+            name="restaurantName"
+            value={formData.restaurantName}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="address">
+            Địa chỉ nhà hàng
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="address"
+            type="text"
+            placeholder="Địa chỉ nhà hàng"
+            name="address"
+            value={formData.address}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="paymentMethod">
+            Phương thức thanh toán
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="paymentMethod"
+            type="text"
+            placeholder="Phương thức thanh toán"
+            name="paymentMethod"
+            value={formData.paymentMethod}
+            onChange={handleInputChange}
+          />
+          <p className="text-gray-600 text-xs italic mt-1">Ví dụ "Nguyen Van A Techcombank 123456789xxx"</p>
+        </div>
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
+            Ghi chú
+          </label>
+          <textarea
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="message"
+            placeholder="Thông điệp"
+            name="message"
+            value={formData.message}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Gửi đăng ký
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
