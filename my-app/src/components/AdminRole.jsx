@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, collection, getDocs, query, setDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getAuth, deleteUser } from 'firebase/auth';
 import { useStateValue } from '../context/StateProvider';
 
 const AdminRole = () => {
     const db = getFirestore();
+    const auth = getAuth(); // Thêm Firebase Auth
     const [{ user }] = useStateValue();
     const [userList, setUserList] = useState([]);
+    
     const fetchUserList = async () => {
         const usersRef = collection(db, 'userRoles');
         const querySnapshot = await getDocs(usersRef);
@@ -30,10 +33,18 @@ const AdminRole = () => {
         const confirmDelete = window.confirm("Quản trị viên chắc chắn muốn xóa tài khoản này khỏi ứng dụng không?");
         if (confirmDelete) {
             try {
+                // Xóa người dùng khỏi Firestore
                 await deleteDoc(doc(db, 'userRoles', userId));
                 fetchUserList();
+                // Lấy người dùng từ Firebase Authentication
+                const userRef = await auth.getUser(userId);
+                
+                // Xóa người dùng khỏi Firebase Authentication
+                await deleteUser(userRef);
+                
+                
             } catch (error) {
-                console.error("Error removing document: ", error);
+                console.error("Error removing user: ", error);
             }
         }
     };

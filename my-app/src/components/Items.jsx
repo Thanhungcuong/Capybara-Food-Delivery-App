@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { deleteObject, ref, uploadBytesResumable, uploadBytes, getDownloadURL } from "firebase/storage";
+import { deleteObject, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { firestore, storage } from "../firebase.config";
 import { useStateValue } from "../context/StateProvider";
 
@@ -12,7 +12,8 @@ const Items = ({ userUid }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [newImageURL, setNewImageURL] = useState("");
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [newImageFile, setNewImageFile] = useState(null);
 
   useEffect(() => {
     setFoodItems(allFoodItems);
@@ -48,34 +49,55 @@ const Items = ({ userUid }) => {
   const handleSaveEdit = async () => {
     try {
       const editedItem = { ...editItem, category: selectedCategory };
-  
-      const itemRef = doc(firestore, "foodItems", editedItem.id);
-      await updateDoc(itemRef, editedItem);
-  
-      if (editedItem.imageURL.startsWith("data:image")) {
-        const file = await fetch(editedItem.imageURL);
-        const blob = await file.blob();
-        const storageRef = ref(storage, `Images/${editedItem.id}`);
-        await uploadBytes(storageRef, blob);
-        const imageURL = await ref(storageRef).getDownloadURL();
-        await updateDoc(itemRef, { imageURL });
+
+      if (newImageFile) {
+        const storageRef = ref(storage, `Images/${editedItem.id}-${newImageFile.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, newImageFile);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + uploadProgress + "% done");
+          },
+          (error) => {
+            console.error("Error uploading image: ", error);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            editedItem.imageURL = downloadURL;
+            const itemRef = doc(firestore, "foodItems", editedItem.id);
+            await updateDoc(itemRef, editedItem);
+            setEditItem(null);
+            setShowEditDialog(false);
+            setUploadSuccess(true);
+            setTimeout(() => setUploadSuccess(false), 4000);
+            setUpdateSuccess(true);
+            setTimeout(() => setUpdateSuccess(false), 4000);
+          }
+        );
+      } else {
+        const itemRef = doc(firestore, "foodItems", editedItem.id);
+        await updateDoc(itemRef, editedItem);
+        setEditItem(null);
+        setShowEditDialog(false);
+        setUpdateSuccess(true);
+        setTimeout(() => setUpdateSuccess(false), 4000);
       }
-  
-      setEditItem(null); 
     } catch (error) {
       console.error("Error updating document: ", error);
     }
   };
-  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    setNewImageFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
       setEditItem({ ...editItem, imageURL: reader.result });
     };
     reader.readAsDataURL(file);
   };
-  
 
   const getCategoryDisplayName = (category) => {
     switch (category) {
@@ -106,9 +128,19 @@ const Items = ({ userUid }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="w-full p-2 rounded-lg text-center text-lg font-semibold bg-emerald-400 text-emerald-800"
+          className="w-full p-2 mb-4 rounded-lg text-center text-lg font-semibold bg-emerald-400 text-emerald-800"
         >
-          Hình ảnh đã được tải lên thành công 😊
+          Hình ảnh đã được cập nhật thành công 😊
+        </motion.p>
+      )}
+      {updateSuccess && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="w-full p-2 mb-4 rounded-lg text-center text-lg font-semibold bg-emerald-400 text-emerald-800"
+        >
+          Dữ liệu chỉnh sửa món ăn đã được cập nhật 😊
         </motion.p>
       )}
       <table className="table-fixed w-full border-spacing-2 rounded-2xl overflow-hidden border">
